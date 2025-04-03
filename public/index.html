@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Datos de COVID-19</title>
+</head>
+<body>
+    <h1>Datos Globales de COVID-19</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Casos</th>
+                <th>Muertes</th>
+                <th>Recuperados</th>
+            </tr>
+        </thead>
+        <tbody id="global-data"></tbody>
+    </table>
+    
+    <h2>Buscar por País</h2>
+    <input type="text" id="country" placeholder="Ingresa un país (Ej: Mexico)">
+    <button onclick="fetchCountryData()">Buscar</button>
+    
+    <h3>Datos del País</h3>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>País</th>
+                <th>Casos</th>
+                <th>Muertes</th>
+                <th>Recuperados</th>
+            </tr>
+        </thead>
+        <tbody id="country-data"></tbody>
+    </table>
+
+    <script>
+        // Cargar datos globales
+        fetch('http://localhost:3000/api/salud')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('global-data').innerHTML = `
+                    <tr>
+                        <td>${data.cases}</td>
+                        <td>${data.deaths}</td>
+                        <td>${data.recovered}</td>
+                    </tr>`;
+            })
+            .catch(error => console.error('Error al obtener datos globales:', error));
+
+        // Buscar datos por país
+        function fetchCountryData() {
+            const country = document.getElementById('country').value;
+            if (!country) return alert('Ingresa un país');
+            
+            fetch(`http://localhost:3000/api/covid/${country}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('country-data').innerHTML = `
+                        <tr>
+                            <td>${data.country}</td>
+                            <td>${data.cases}</td>
+                            <td>${data.deaths}</td>
+                            <td>${data.recovered}</td>
+                        </tr>`;
+                })
+                .catch(error => console.error('Error al obtener datos del país:', error));
+        }
+    </script>
+</body>
+</html>
